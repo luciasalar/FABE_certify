@@ -1,0 +1,41 @@
+experiment:
+    # sklearn.svm.SVC:
+    #     clf__classifier__C: [0.1, 0.3, 0.5, 0.7, 0.9, 1.0, 1.5, 2.0]
+    #     clf__classifier__kernel: ['linear', 'poly', 'rbf', 'sigmoid']
+    #     clf__classifier__gamma: [0.5, 0.1, 0.01, 0.001, 0.0001]
+    #     clf__classifier__class_weight: ['balanced']
+    #     clf__classifier__random_state: [300]
+
+
+    # sklearn.ensemble.RandomForestClassifier:
+    #     clf__classifier__max_depth: [20, 50, 100, 200]
+    #     clf__classifier__max_features: ['auto','sqrt','log2']
+    #     clf__classifier__max_leaf_nodes: [300,500,1000]
+    #     clf__classifier__n_estimators: [100,300,500,1000]
+    #     clf__classifier__n_jobs: [-1]
+    #     clf__classifier__random_state: [300]
+    #     clf__classifier__class_weight: ['balanced']
+
+
+    sklearn.linear_model.LogisticRegression:
+        clf__classifier__penalty: ['l1','l2']
+        clf__classifier__C: [0.1, 0.3, 0.5, 0.7, 0.9, 1.0, 1.5, 2.0]
+        clf__classifier__random_state: [300]
+        clf__classifier__n_jobs: [-1]
+        clf__classifier__solver: ['liblinear']
+
+    # sklearn.ensemble.ExtraTreesClassifier:
+    #     clf__classifier__n_estimators: [100,300,500,1000]
+    #     clf__classifier__max_depth: [20, 50, 100, 200]
+    #     clf__classifier__max_features: ['auto','sqrt','log2']
+    #     clf__classifier__max_leaf_nodes: [300,500,1000]
+    #     clf__classifier__n_jobs: [-1]
+    #     clf__classifier__random_state: [300]
+    #     clf__classifier__class_weight: ['balanced']
+
+
+features:
+    #set1: ['workclass', 'education', 'marital-status', 'occupation', 'relationship','race', 'gender','age', 'educational',  'capital', 'hours-per-week']
+    set1: ['workclass', 'education', 'marital-status', 'occupation']
+
+    
