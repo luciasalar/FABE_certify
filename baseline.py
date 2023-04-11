@@ -33,7 +33,7 @@ class Process_data:
 
 
 	def create_dummies(self):
-		#subset variables to create dummies
+		#subset and recode variables to create dummies
 
 		adult_dummy = adult_raw[['workclass', 'education', 'marital-status', 'occupation', 'relationship','race', 'gender', 'income']]
 
@@ -42,7 +42,7 @@ class Process_data:
 		
 		adult_dummy['education'] = adult_dummy['education'].replace(to_replace = ['10th', '11th', '12th', '1st-4th', '5th-6th', '7th-8th', '9th', 'Preschool'], value = 'below_Bachelors')
 		adult_dummy['education'] = adult_dummy['education'].replace(to_replace = ['Bachelors', 'Doctorate', 'HS-grad', 'Masters', 'Some-college', 'Prof-school', 'Assoc-acdm', 'Assoc-voc'], value = 'above_Bachelors')
-		print(adult_dummy['education'].value_counts())
+		#print(adult_dummy['education'].value_counts())
 
 		dummies = pd.get_dummies(adult_dummy, prefix=['workclass', 'education', 'marital-status', 'occupation', 'relationship','race', 'gender', 'income'],  drop_first=True)
 
@@ -53,10 +53,29 @@ class Process_data:
 		
 		return all_col
 
+	def create_intersection_edu_race_gender(self):
+		"""create a new column"""
+
+		all_col = self.create_dummies()
+
+		edu_race_gender_disadvantage = []
+		for education, race, gender in zip(all_col['education_below_Bachelors'], all_col['race_nonWhite'], all_col['gender_Male']):
+			if (education > 0 and race > 0 and gender >0):
+				#print('yes')
+				edu_race_gender_disadvantage.append(1)
+			else:
+				edu_race_gender_disadvantage.append(0)
+
+		all_col['edu_race_gender_disadvantage'] =  edu_race_gender_disadvantage
+
+		return all_col
+
+
+
 	def get_train_test_split(self) -> pd.DataFrame:
 		'''get train test set'''
 
-		all_col = self.create_dummies()
+		#all_col = self.create_dummies()
 		y  = all_col["income"]
 		X = all_col.drop(["income"], axis=1)
 
@@ -199,7 +218,6 @@ class Training:
 		return TPR_1, TPR_0, FPR_1, FPR_0, PPV_1, PPV_0 
 
 
-
 	def test_model(self, classifier):
 		'''train model, use model to predict on new data and save results'''
 	   
@@ -236,12 +254,11 @@ def load_experiment(path_to_experiment):
 	return data
 
 
-
-
-
 p = Process_data()
 adult_raw = p.read_file()
 all_col = p.create_dummies()
+all_col = p.create_intersection_edu_race_gender()
+#print(sum(all_col['edu_race_gender_disadvantage']))
 experiment = load_experiment(p.path + 'parameters.yaml')
 X_train, X_test, y_train, y_test = p.get_train_test_split()
 
@@ -253,10 +270,10 @@ writer_top = csv.writer(f, delimiter=',', quoting=csv.QUOTE_MINIMAL)
 
 #if result file doesn't exist, create file and write column names
 if not file_exists:
-	writer_top.writerow(['best_scores'] + ['best_parameters'] + ['report']  + ['time'] + ['model'] +['feature_set'] + ['TPR_male'] + ['TPR_female'] + ['FPR_male'] + ['FPR_female'] + ['PPV_male'] + ['PPV_female'] + ['TPR_nonWhite'] + ['TPR_White'] +  ['FPR_nonWhite'] +  ['FPR_White'] + ['PPV_nonWhite'] +  ['PPV_White'] + ['TPR_below_B'] + ['TPR_above_B'] +  ['FPR_below_B'] +  ['FPR_above_B'] +  ['PPV_below_B'] + ['PPV_above_B'])
+	writer_top.writerow(['best_scores'] + ['best_parameters'] + ['report']  + ['time'] + ['model'] +['feature_set'] + ['TPR_male'] + ['TPR_female'] + ['FPR_male'] + ['FPR_female'] + ['PPV_male'] + ['PPV_female'] + ['TPR_nonWhite'] + ['TPR_White'] +  ['FPR_nonWhite'] +  ['FPR_White'] + ['PPV_nonWhite'] +  ['PPV_White'] + ['TPR_below_B'] + ['TPR_above_B'] +  ['FPR_below_B'] +  ['FPR_above_B'] +  ['PPV_below_B'] + ['PPV_above_B'] + ['TPR_disadvantage'] + ['TPR_advantage'] + ['FPR_disadvantage'] +  ['FPR_advantage'] +  ['PPV_disadvantage'] + ['PPV_disadvantage'] )
 	f.close()
 
-# loop through each classifier and parameters defined in experiment.yaml, then we get the classification report of general performance andfe compare the log loss in each group defined by sensitive attributes
+# loop through each classifier and parameters defined in experiment.yaml, then we get the classification report of general performance and compare group performance 
 
 for classifier in experiment['experiment']:
 	parameters = experiment['experiment'][classifier]
@@ -280,14 +297,14 @@ for classifier in experiment['experiment']:
 		#get classification report
 		report = classification_report(y_true, y_pred, digits=2)
 		
-# # 		# sensitive attributes 
+# 		# sensitive attributes 
 		TPR_male, TPR_female, FPR_male, FPR_female, PPV_female, PPV_male  = train.get_group_evaluation('gender_Male') 
 		TPR_nonWhite, TPR_White, FPR_nonWhite, FPR_White, PPV_nonWhite, PPV_White  = train.get_group_evaluation('race_nonWhite') 
-		TPR_below_B, TPR_above_B, FPR_below_B, FPR_above_B, PPV_below_B, PPV_above_B  = train.get_group_evaluation('education_below_Bachelors') 
-
+		TPR_below_B, TPR_above_B, FPR_below_B, FPR_above_B, PPV_below_B, PPV_above_B  = train.get_group_evaluation('education_below_Bachelors')
+		TPR_disadvantage, TPR_advantage, FPR_disadvantage, FPR_advantage, PPV_disadvantage, PPV_advantage  = train.get_group_evaluation('edu_race_gender_disadvantage') 
 
 		# combine the result columns: grid search best score, best parameters, classification report, log loss, experiment time, classifier, feature set, log loss of sensitive groups
-		result_row = [[grid_search.best_score_, grid_search.best_params_, report, str(datetime.datetime.now()), classifier, features_list,  TPR_male, TPR_female, FPR_male, FPR_female, PPV_female, PPV_male, TPR_nonWhite, TPR_White, FPR_nonWhite, FPR_White, PPV_nonWhite, PPV_White, TPR_below_B, TPR_above_B, FPR_below_B, FPR_above_B, PPV_below_B, PPV_above_B]]
+		result_row = [[grid_search.best_score_, grid_search.best_params_, report, str(datetime.datetime.now()), classifier, features_list,  TPR_male, TPR_female, FPR_male, FPR_female, PPV_female, PPV_male, TPR_nonWhite, TPR_White, FPR_nonWhite, FPR_White, PPV_nonWhite, PPV_White, TPR_below_B, TPR_above_B, FPR_below_B, FPR_above_B, PPV_below_B, PPV_above_B, TPR_disadvantage, TPR_advantage, FPR_disadvantage, FPR_advantage, PPV_disadvantage, PPV_advantage]]
 
 		# store test result
 		f = open(p.path + 'results/test_result.csv', 'a')
