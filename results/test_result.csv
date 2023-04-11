@@ -1,4 +1,4 @@
-best_scores,best_parameters,report,time,model,feature_set,TPR_male,TPR_female,FPR_male,FPR_female,PPV_male,PPV_female,TPR_nonWhite,TPR_White,FPR_nonWhite,FPR_White,PPV_nonWhite,PPV_White,TPR_below_B,TPR_above_B,FPR_below_B,FPR_above_B,PPV_below_B,PPV_above_B
+best_scores,best_parameters,report,time,model,feature_set,TPR_male,TPR_female,FPR_male,FPR_female,PPV_male,PPV_female,TPR_nonWhite,TPR_White,FPR_nonWhite,FPR_White,PPV_nonWhite,PPV_White,TPR_below_B,TPR_above_B,FPR_below_B,FPR_above_B,PPV_below_B,PPV_above_B,TPR_disadvantage,TPR_advantage,FPR_disadvantage,FPR_advantage,PPV_disadvantage,PPV_disadvantage
 0.8301641770000889,"{'clf__classifier__C': 0.3, 'clf__classifier__n_jobs': -1, 'clf__classifier__penalty': 'l2', 'clf__classifier__random_state': 300, 'clf__classifier__solver': 'liblinear'}","              precision    recall  f1-score   support
 
            0       0.86      0.93      0.89      7442
@@ -7,4 +7,13 @@ best_scores,best_parameters,report,time,model,feature_set,TPR_male,TPR_female,FP
     accuracy                           0.83      9769
    macro avg       0.78      0.73      0.75      9769
 weighted avg       0.82      0.83      0.82      9769
-",2023-04-11 14:16:21.554298,sklearn.linear_model.LogisticRegression,"['workclass', 'education', 'marital-status', 'occupation']",0.5486815415821501,0.4,0.10530915446799213,0.020593368237347295,0.6918158567774936,0.7064676616915423,0.4504950495049505,0.5331764705882353,0.04902789518174133,0.07716887681738296,0.610738255033557,0.7011138613861386,0.0,0.5425531914893617,0.0008298755186721991,0.08658008658008658,0.0,0.6938775510204082
+",2023-04-11 15:06:59.363330,sklearn.linear_model.LogisticRegression,"['workclass', 'education', 'marital-status', 'occupation']",0.5486815415821501,0.4,0.10530915446799213,0.020593368237347295,0.6918158567774936,0.7064676616915423,0.4504950495049505,0.5331764705882353,0.04902789518174133,0.07716887681738296,0.610738255033557,0.7011138613861386,0.0,0.5425531914893617,0.0008298755186721991,0.08658008658008658,0.0,0.6938775510204082,0.0,0.5273588970271434,0.0,0.07391720180352507,nan,0.693484419263456
+0.8301641770000889,"{'clf__classifier__C': 0.3, 'clf__classifier__n_jobs': -1, 'clf__classifier__penalty': 'l2', 'clf__classifier__random_state': 300, 'clf__classifier__solver': 'liblinear'}","              precision    recall  f1-score   support
+
+           0       0.86      0.93      0.89      7442
+           1       0.69      0.53      0.60      2327
+
+    accuracy                           0.83      9769
+   macro avg       0.78      0.73      0.75      9769
+weighted avg       0.82      0.83      0.82      9769
+",2023-04-11 15:08:11.640717,sklearn.linear_model.LogisticRegression,"['workclass', 'education', 'marital-status', 'occupation']",0.5486815415821501,0.4,0.10530915446799213,0.020593368237347295,0.6918158567774936,0.7064676616915423,0.4504950495049505,0.5331764705882353,0.04902789518174133,0.07716887681738296,0.610738255033557,0.7011138613861386,0.0,0.5425531914893617,0.0008298755186721991,0.08658008658008658,0.0,0.6938775510204082,0.0,0.5273588970271434,0.0,0.07391720180352507,nan,0.693484419263456
